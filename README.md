@@ -46,11 +46,15 @@ When the app notices that the last zip code search was made before today's date,
 Standard rails application start up:
 
 1. Clone the repo.
+
 2. `bundle install` the gems
+
 3. Create and migrate the database: `rake db:create db:migrate`
 
 _NOTE_: For testing, there are no fixtures or seed data yet.  Everything is built of a webmock example of the OnConnect API payload
+
 4. `rails s` will start the server
+
 5. Go ahead and hit the local server with a new zip code search:
 ```
 curl -X POST 127.0.0.1:3000/searches\?zip_code\=80222
