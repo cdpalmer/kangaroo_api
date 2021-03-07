@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_07_033934) do
+ActiveRecord::Schema.define(version: 2021_03_07_051308) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "movies", force: :cascade do |t|
+    t.string "description"
+    t.string "title"
+    t.integer "duration"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "searches", force: :cascade do |t|
     t.string "zip_code"
@@ -26,6 +34,16 @@ ActiveRecord::Schema.define(version: 2021_03_07_033934) do
     t.bigint "theater_id"
     t.index ["search_id"], name: "index_searches_theaters_on_search_id"
     t.index ["theater_id"], name: "index_searches_theaters_on_theater_id"
+  end
+
+  create_table "showtimes", force: :cascade do |t|
+    t.bigint "movie_id"
+    t.bigint "theater_id"
+    t.integer "start_time"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["movie_id"], name: "index_showtimes_on_movie_id"
+    t.index ["theater_id"], name: "index_showtimes_on_theater_id"
   end
 
   create_table "theaters", force: :cascade do |t|

@@ -33,12 +33,12 @@ describe OnConnect do
       subject.parse_zipcode_payload(onconnect_payload, search)
     end
 
-    # it 'creates the correct movies' do
-    #   processed_movie_titles = Movie.all.map(&:title)
-    #
-    #   expect( Movie.count ).to eq(webmock_titles.count)
-    #   expect( processed_movie_titles.sort ).to eq(webmock_titles)
-    # end
+    it 'creates the correct movies' do
+      processed_movie_titles = Movie.all.map(&:title)
+
+      expect( Movie.count ).to eq(webmock_titles.count)
+      expect( processed_movie_titles.sort ).to eq(webmock_titles)
+    end
 
     it 'creates the correct theatres' do
       processed_movie_theatres = Theater.all.map(&:title)
@@ -47,11 +47,11 @@ describe OnConnect do
       expect( processed_movie_theatres.sort ).to eq(webmock_theatres)
     end
 
-    # it 'creates the correct showtimes' do
-    #   processed_showtimes = Showtime.all
-    #
-    #   expect( processed_showtimes.count ).to eq(89)
-    # end
+    it 'creates the correct showtimes' do
+      processed_showtimes = Showtime.all
+
+      expect( processed_showtimes.count ).to eq(89)
+    end
   end
 
   describe '#calc_movie_length' do

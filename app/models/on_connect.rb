@@ -25,9 +25,9 @@ class OnConnect
       JSON.parse(payload).each do |movie|
         unless payload_movies.include?(movie['title'])
           payload_movies << movie['title']
-          # mov = Movie.find_or_create_by(title: movie['title'],
-          #              description: movie['shortDescription'],
-          #              duration: calc_movie_length(movie['runTime']))
+          mov = Movie.find_or_create_by(title: movie['title'],
+                       description: movie['shortDescription'],
+                       duration: calc_movie_length(movie['runTime']))
         end
 
         movie['showtimes'].each do |showtime|
@@ -40,9 +40,9 @@ class OnConnect
             t.searches << search unless t.searches.include?(search)
             search.theaters << t
           end
-          # Showtime.find_or_create_by(theater_id: tid,
-          #                            movie_id: mov.id,
-          #                            start_time: calc_time_from_epoch(showtime['dateTime']))
+          Showtime.find_or_create_by(theater_id: tid,
+                                     movie_id: mov.id,
+                                     start_time: calc_time_from_epoch(showtime['dateTime']))
         end
       end
     end
