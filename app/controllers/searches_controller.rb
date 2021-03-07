@@ -7,9 +7,14 @@ class SearchesController < ApplicationController
 
   def create
     search = Search.new(search_params)
-    search.save!
+    if search.valid?
+      existing_record = Search.find_by(zip_code: search.zip_code)
+      search.save! unless existing_record
 
-    render 200
+      render json: search, status: 200
+    else
+      render json: { error: 'Invalid zip code format' }, status: 422
+    end
   end
 
   private
