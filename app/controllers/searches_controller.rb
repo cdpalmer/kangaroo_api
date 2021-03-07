@@ -8,14 +8,30 @@ class SearchesController < ApplicationController
   def create
     search = Search.new(search_params)
     if search.valid?
+      output = {}
       existing_record = Search.find_by(zip_code: search.zip_code)
-      unless existing_record
-        search.save! unless existing_record
-        movie_service = MovieService.new
-        movie_service.process_zipcode(search.zip_code)
-      end
 
-      render json: search, status: 200
+      if existing_record
+        showtimes = existing_record.theaters.map(&:showtimes).flatten.uniq
+        output = {
+          zip_code: existing_record.zip_code,
+          found_movies: showtimes.map(&:movie).uniq.count,
+          found_theaters: existing_record.theaters.count,
+          found_showtimes: showtimes.count
+        }
+      else
+        search.save!
+        movie_service = MovieService.new
+        summary = movie_service.process_zipcode(search.zip_code)
+
+        output = {
+          zip_code: search.zip_code,
+          found_movies: summary[:movies].count,
+          found_theaters: summary[:theaters].count,
+          found_showtimes: summary[:showtimes].count
+        }
+      end
+      render json: output, status: 200
     else
       render json: { error: 'Invalid zip code format' }, status: 422
     end

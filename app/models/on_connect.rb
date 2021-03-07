@@ -12,10 +12,16 @@ class OnConnect
   end
 
   def process_zipcode(zip)
+    found_data = {
+      movies: [],
+      theaters: [],
+      showtimes: []
+    }
     today = Date.today.strftime("%Y-%m-%d")
     zip_endpoint = "?startDate=#{today}&zip=#{zip}&radius=#{RADIUS_IN_MILES}&units=mi&api_key=bm7vue97kkpea6phfftp93cu"
-    output = @connection.get zip_endpoint
-    payload = output.body
+    response = @connection.get zip_endpoint
+    payload = response.body
+    return found_data if payload.empty?
 
     begin
       payload_movies = []
@@ -26,6 +32,7 @@ class OnConnect
           mov = Movie.find_or_create_by(title: movie['title'],
                        description: movie['shortDescription'],
                        duration: calc_movie_length(movie['runTime']))
+          found_data[:movies] = found_data[:movies] << mov
         end
 
         movie['showtimes'].each do |showtime|
@@ -33,16 +40,22 @@ class OnConnect
           unless payload_theaters.include?(tid)
             payload_theaters << tid
             t = Theater.find_or_create_by(id: tid, title: showtime['theatre']['name'])
+            found_data[:theaters] = found_data[:theaters] << t
             search = Search.find_by(zip_code: zip)
             t.searches << search unless search && t.searches.include?(search)
             search.theaters << t
           end
-          Showtime.find_or_create_by(theater_id: tid,
-                                     movie_id: mov&.id,
-                                     start_time: calc_time_from_epoch(showtime['dateTime']))
+          showtime = Showtime.find_or_create_by(
+            theater_id: tid,
+            movie_id: mov&.id,
+            start_time: calc_time_from_epoch(showtime['dateTime'])
+          )
+          found_data[:showtimes] = found_data[:showtimes] << showtime
         end
       end
     end
+
+    found_data
   end
 
   def calc_time_from_epoch(timestamp)
