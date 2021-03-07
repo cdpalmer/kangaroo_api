@@ -3,7 +3,9 @@
 ### System Requirements
 
 Ruby 2.5.3
+
 Rails 6
+
 Postgres 9.6.10 and above
 
 ### What is this
@@ -45,10 +47,12 @@ Standard rails application start up:
 1. Clone the repo.
 2. `bundle install` the gems
 3. Create and migrate the database: `rake db:create db:migrate`
-    a. _NOTE_: For testing, there are no fixtures or seed data yet.  Everything is built of a webmock example of the OnConnect API payload
+
+_NOTE_: For testing, there are no fixtures or seed data yet.  Everything is built of a webmock example of the OnConnect API payload
 4. `rails s` will start the server
 5. Go ahead and hit the local server with a new zip code search:
 ```
 curl -X POST 127.0.0.1:3000/searches\?zip_code\=80222
 ```
-    a. _NOTE:_ I am aware I've committed the API key into my private repo.  It won't stay that way, it was just a last resort from difficulties of using ENV vars in the app.  
+
+_NOTE:_ I am aware I've committed the API key into my private repo.  It won't stay that way, it was just a last resort from difficulties of using ENV vars in the app.  
