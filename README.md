@@ -18,7 +18,8 @@ The only entry point is to create a zip code search.  This is done with an HTTP 
 POST https://kangaroo-movies-api.herokuapp.com/searches?zip_code=80222
 ```
 
-You will then receive a summary of the related data that was found, or the related data that was processed from the OnConnect API
+This endpoint will query the OnConnect API to look for theaters and their respective movie and show times within a 25 mile radius.
+You will then receive a summary of the related data that has already been processed for that zip code, or the related data that was processed from the OnConnect API
 
 Once data has been processed for the day, you can pull the found movies from the app:
 
