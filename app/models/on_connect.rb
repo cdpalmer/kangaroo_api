@@ -11,14 +11,12 @@ class OnConnect
     end
   end
 
-  def find_by_zipcode(zip)
+  def process_zipcode(zip)
     today = Date.today.strftime("%Y-%m-%d")
     zip_endpoint = "?startDate=#{today}&zip=#{zip}&radius=#{RADIUS_IN_MILES}&units=mi&api_key=#{ENV["ONCONNECT_KEY"]}"
     output = @connection.get zip_endpoint
-    output.body
-  end
+    payload = output.body
 
-  def parse_zipcode_payload(payload, search)
     begin
       payload_movies = []
       payload_theaters = []
@@ -34,10 +32,9 @@ class OnConnect
           tid = showtime['theatre']['id']
           unless payload_theaters.include?(tid)
             payload_theaters << tid
-            t = Theater.find_or_create_by(id: tid,
-                          title: showtime['theatre']['name'])
-            # t.searches << search unless t.searches.include?(search)
-            t.searches << search unless t.searches.include?(search)
+            t = Theater.find_or_create_by(id: tid, title: showtime['theatre']['name'])
+            search = Search.find_by(zip_code: zip)
+            t.searches << search unless search && t.searches.include?(search)
             search.theaters << t
           end
           Showtime.find_or_create_by(theater_id: tid,

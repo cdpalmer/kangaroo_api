@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe OnConnect do
-  describe '#parse_zipcode_payload' do
+  describe '#process_zipcode' do
     let(:search) { Search.create(zip_code: '90210') }
     let(:onconnect_payload) { OnConnectWebmock.zipcode_response }
     let(:webmock_titles) {
@@ -30,7 +30,8 @@ describe OnConnect do
     }
 
     before :each do
-      subject.parse_zipcode_payload(onconnect_payload, search)
+      expect_any_instance_of(Faraday::Connection).to receive(:get) { OpenStruct.new(body: onconnect_payload) }
+      subject.process_zipcode(search.zip_code)
     end
 
     it 'creates the correct movies' do
