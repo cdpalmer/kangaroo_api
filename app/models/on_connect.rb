@@ -42,8 +42,8 @@ class OnConnect
             t = Theater.find_or_create_by(id: tid, title: showtime['theatre']['name'])
             found_data[:theaters] = found_data[:theaters] << t
             search = Search.find_by(zip_code: zip)
-            t.searches << search unless search && t.searches.include?(search)
-            search.theaters << t
+            t.searches << search if search && !t.searches.include?(search)
+            search.theaters << t if search
           end
           showtime = Showtime.find_or_create_by(
             theater_id: tid,

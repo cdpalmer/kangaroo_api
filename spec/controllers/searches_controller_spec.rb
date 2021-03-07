@@ -5,7 +5,13 @@ describe "Search", type: :request do
   describe '#create' do
     it 'works' do
       zip = '90210'
-      expect_any_instance_of(MovieService).to receive(:process_zipcode)
+      expect_any_instance_of(MovieService).to receive(:process_zipcode) {
+        {
+          movies: [],
+          theaters: [],
+          showtimes: []
+        }
+      }
       post searches_path, params: { zip_code: zip }
 
       expect(response.code).to eq("200")
