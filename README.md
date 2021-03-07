@@ -1,24 +1,54 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### System Requirements
 
-Things you may want to cover:
+Ruby 2.5.3
+Rails 6
+Postgres 9.6.10 and above
 
-* Ruby version
+### What is this
 
-* System dependencies
+This is a rails API that stores and processes data from OnConnect, a movie and theater API.
 
-* Configuration
+The only entry point is to create a zip code search.  This is done with an HTTP POST:
 
-* Database creation
+```
+POST https://kangaroo-movies-api.herokuapp.com/searches?zip_code=80222
+```
 
-* Database initialization
+You will then receive a summary of the related data that was found, or the related data that was processed from the OnConnect API
 
-* How to run the test suite
+Once data has been processed for the day, you can pull the found movies from the app:
 
-* Services (job queues, cache servers, search engines, etc.)
+```
+GET https://kangaroo-movies-api.herokuapp.com/movies
+```
 
-* Deployment instructions
+If you'd like, you can sort through the movies by title:
 
-* ...
+```
+GET https://kangaroo-movies-api.herokuapp.com/movies?sort=desc
+```
+
+### Notes
+
+This is built off a free OnConnect API program, with limited API calls.
+
+To save API calls, the zip code that is searched is saved.  Once a new zip code is submitted, the app will check if that zip code has been searched today, and only call the API if the consumer is requesting a new zip code's data.
+
+When the app notices that the last zip code search was made before today's date, the data is wiped and we start the app clean and new.
+
+### Tech notes
+
+Standard rails application start up:
+
+1. Clone the repo.
+2. `bundle install` the gems
+3. Create and migrate the database: `rake db:create db:migrate`
+    a. _NOTE_: For testing, there are no fixtures or seed data yet.  Everything is built of a webmock example of the OnConnect API payload
+4. `rails s` will start the server
+5. Go ahead and hit the local server with a new zip code search:
+```
+curl -X POST 127.0.0.1:3000/searches\?zip_code\=80222
+```
+    a. _NOTE:_ I am aware I've committed the API key into my private repo.  It won't stay that way, it was just a last resort from difficulties of using ENV vars in the app.  
