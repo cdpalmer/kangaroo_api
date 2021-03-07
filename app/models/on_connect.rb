@@ -13,7 +13,7 @@ class OnConnect
 
   def process_zipcode(zip)
     today = Date.today.strftime("%Y-%m-%d")
-    zip_endpoint = "?startDate=#{today}&zip=#{zip}&radius=#{RADIUS_IN_MILES}&units=mi&api_key=#{ENV["ONCONNECT_KEY"]}"
+    zip_endpoint = "?startDate=#{today}&zip=#{zip}&radius=#{RADIUS_IN_MILES}&units=mi&api_key=bm7vue97kkpea6phfftp93cu"
     output = @connection.get zip_endpoint
     payload = output.body
 
@@ -38,7 +38,7 @@ class OnConnect
             search.theaters << t
           end
           Showtime.find_or_create_by(theater_id: tid,
-                                     movie_id: mov.id,
+                                     movie_id: mov&.id,
                                      start_time: calc_time_from_epoch(showtime['dateTime']))
         end
       end
