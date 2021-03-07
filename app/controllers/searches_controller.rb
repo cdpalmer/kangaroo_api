@@ -6,6 +6,8 @@ class SearchesController < ApplicationController
   end
 
   def create
+    wipe_old_data if Search.last && !Search.last.created_at.today?
+
     search = Search.new(search_params)
     if search.valid?
       output = {}
@@ -41,5 +43,11 @@ class SearchesController < ApplicationController
 
   def search_params
     params.permit(:zip_code)
+  end
+
+  def wipe_old_data
+    Search.destroy_all
+    Showtime.destroy_all
+    Movie.destroy_all
   end
 end

@@ -49,5 +49,28 @@ describe "Search", type: :request do
       expect(Theater.count).to eq(7)
       expect(Showtime.count).to eq(89)
     end
+
+    it 'clears out old data on a new day' do
+      expect_any_instance_of(Faraday::Connection).to receive(:get) { OpenStruct.new(body: OnConnectWebmock.zipcode_response) }
+      zip = '90210'
+      post searches_path, params: { zip_code: zip }
+
+      # counts taken off webmock data
+      expect(Movie.count).to eq(9)
+      expect(Theater.count).to eq(7)
+      expect(Showtime.count).to eq(89)
+
+      Timecop.travel(Time.now + 1.day)
+      expect(Search).to receive(:destroy_all)
+      expect(Showtime).to receive(:destroy_all)
+      expect(Movie).to receive(:destroy_all)
+
+      post searches_path, params: { zip_code: zip }
+
+      # counts taken off webmock data
+      expect(Movie.count).to eq(9)
+      expect(Theater.count).to eq(7)
+      expect(Showtime.count).to eq(89)
+    end
   end
 end
